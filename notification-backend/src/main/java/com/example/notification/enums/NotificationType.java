@@ -1,0 +1,8 @@
+package com.example.notification.enums;
+
+public enum NotificationType {
+    EMAIL,
+    SMS,
+    PUSH
+}
+
