@@ -19,10 +19,6 @@ import java.util.Random;
 public class NotificationProcessorService {
 
     private final NotificationRepository notificationRepository;
-    private final Random random = new Random();
-
-    @Value("${notification.failure.rate:0.3}")
-    private double failureRate;
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -44,48 +40,5 @@ public class NotificationProcessorService {
                 routingKey,
                 notificationId
         );
-
-//        Notification notification = notificationRepository.findById(notificationId)
-//                .orElseThrow(() -> new RuntimeException("Notification not found: " + notificationId));
-//
-//        try {
-//            // Simulate processing delay
-//            Thread.sleep(1000 + random.nextInt(2000));
-//
-//            // Simulate random failure (30% chance)
-//            boolean shouldFail = random.nextDouble() < failureRate;
-//
-//            if (shouldFail) {
-//                handleFailure(notification);
-//            } else {
-//                handleSuccess(notification);
-//            }
-//
-//        } catch (InterruptedException e) {
-//            Thread.currentThread().interrupt();
-//            log.error("Processing interrupted for notification {}", notificationId, e);
-//            handleFailure(notification);
-//        } catch (Exception e) {
-//            log.error("Error processing notification {}", notificationId, e);
-//            handleFailure(notification);
-//        }
-    }
-
-    private void handleSuccess(Notification notification) {
-        notification.setStatus(NotificationStatus.SENT);
-        notification.setErrorMessage(null);
-        notificationRepository.save(notification);
-
-        log.info("Notification {} sent successfully via {}",
-                notification.getId(), notification.getType());
-    }
-
-    private void handleFailure(Notification notification) {
-        notification.setStatus(NotificationStatus.FAILED);
-        notification.setErrorMessage("Simulated failure - Service temporarily unavailable");
-        notificationRepository.save(notification);
-
-        log.warn("Notification {} failed. Retry count: {}",
-                notification.getId(), notification.getRetryCount());
     }
 }
