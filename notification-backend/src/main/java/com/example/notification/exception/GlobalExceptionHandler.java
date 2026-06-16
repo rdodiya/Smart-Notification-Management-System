@@ -96,16 +96,3 @@ public class GlobalExceptionHandler {
                         .build());
     }
 }
-
-@lombok.Data
-@lombok.Builder
-@lombok.NoArgsConstructor
-@lombok.AllArgsConstructor
-class ErrorResponse {
-    private LocalDateTime timestamp;
-    private int status;
-    private String error;
-    private String message;
-    private Map<String, String> validationErrors;
-}
-

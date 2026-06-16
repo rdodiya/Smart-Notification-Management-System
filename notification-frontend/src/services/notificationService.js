@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8181/notification/api';
+const API_BASE_URL = 'http://localhost:8181/api';
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
