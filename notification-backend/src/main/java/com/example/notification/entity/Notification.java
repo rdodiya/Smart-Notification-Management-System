@@ -15,12 +15,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "notifications", indexes = {
-        @Index(name = "idx_user_id", columnList = "userId"),
-        @Index(name = "idx_status", columnList = "status"),
-        @Index(name = "idx_type", columnList = "type"),
-        @Index(name = "idx_created_at", columnList = "createdAt")
-})
+@Table(name = "notifications")
 @Data
 @Builder
 @NoArgsConstructor
@@ -38,7 +33,7 @@ public class Notification {
     @Column(nullable = false, length = 20)
     private NotificationType type;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false)
     private String message;
 
     @Enumerated(EnumType.STRING)

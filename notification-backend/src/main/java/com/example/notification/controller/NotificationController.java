@@ -22,7 +22,12 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @PostMapping
+    @GetMapping("/hello")
+    public ResponseEntity<String> hello(){
+        return ResponseEntity.status(HttpStatus.OK).body("hello");
+    }
+
+     @PostMapping
     public ResponseEntity<NotificationResponseDTO> createNotification(
             @Valid @RequestBody NotificationRequestDTO request) {
         log.info("Received create notification request for user: {}", request.getUserId());
@@ -52,4 +57,6 @@ public class NotificationController {
         NotificationResponseDTO response = notificationService.retryNotification(id);
         return ResponseEntity.ok(response);
     }
+
+
 }

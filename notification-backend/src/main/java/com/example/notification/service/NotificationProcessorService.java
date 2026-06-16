@@ -5,6 +5,7 @@ import com.example.notification.enums.NotificationStatus;
 import com.example.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -23,35 +24,51 @@ public class NotificationProcessorService {
     @Value("${notification.failure.rate:0.3}")
     private double failureRate;
 
+    private final RabbitTemplate rabbitTemplate;
+
+    @Value("${notification.exchange.name}")
+    private String exchangeName;
+
+    @Value("${notification.routing.key}")
+    private String routingKey;
+
+
     @Async
     @Transactional
     public void processNotification(Long notificationId) {
         log.info("Processing notification ID: {}", notificationId);
+        log.info("Sending notification {} to RabbitMQ", notificationId);
 
-        Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new RuntimeException("Notification not found: " + notificationId));
+        rabbitTemplate.convertAndSend(
+                exchangeName,
+                routingKey,
+                notificationId
+        );
 
-        try {
-            // Simulate processing delay
-            Thread.sleep(1000 + random.nextInt(2000));
-
-            // Simulate random failure (30% chance)
-            boolean shouldFail = random.nextDouble() < failureRate;
-
-            if (shouldFail) {
-                handleFailure(notification);
-            } else {
-                handleSuccess(notification);
-            }
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("Processing interrupted for notification {}", notificationId, e);
-            handleFailure(notification);
-        } catch (Exception e) {
-            log.error("Error processing notification {}", notificationId, e);
-            handleFailure(notification);
-        }
+//        Notification notification = notificationRepository.findById(notificationId)
+//                .orElseThrow(() -> new RuntimeException("Notification not found: " + notificationId));
+//
+//        try {
+//            // Simulate processing delay
+//            Thread.sleep(1000 + random.nextInt(2000));
+//
+//            // Simulate random failure (30% chance)
+//            boolean shouldFail = random.nextDouble() < failureRate;
+//
+//            if (shouldFail) {
+//                handleFailure(notification);
+//            } else {
+//                handleSuccess(notification);
+//            }
+//
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//            log.error("Processing interrupted for notification {}", notificationId, e);
+//            handleFailure(notification);
+//        } catch (Exception e) {
+//            log.error("Error processing notification {}", notificationId, e);
+//            handleFailure(notification);
+//        }
     }
 
     private void handleSuccess(Notification notification) {
